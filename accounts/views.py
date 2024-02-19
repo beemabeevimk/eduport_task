@@ -12,10 +12,6 @@ from .serializers import UserRegisterSerializer, UserSerializer, AccountSerializ
     DriverRegisterSerializer, RiderRegisterSerializer, DriverProfileSerializer, DriverProfileUpdateSerializer
 
 
-"""
-Implement API endpoints for user registration and login 
-
-"""
 
 # Custom Token Obtain Pair Serializer to include custom claims like email, name, and is_superuser.
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -33,6 +29,10 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         
         return token
 
+"""
+Implement API endpoints for user registration and login 
+
+"""
 
 # Custom Token Obtain Pair View using the custom serializer.
 class MyTokenObtainPairView(TokenObtainPairView):
