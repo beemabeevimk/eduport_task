@@ -125,23 +125,3 @@ class LogoutView(APIView):
         except TokenError:
             raise AuthenticationFailed("Invalid Token")
   
-from rest_framework.decorators import action        
-from rest_framework import viewsets     
-class AccountsViewSet(viewsets.ModelViewSet):
-    """
-    A viewset for viewing and editing user instances.
-    """
-    serializer_class = AccountSerializer
-    queryset = Account.objects.all()
-    
-    @action(detail=False)
-    def list_drivers(self, request):
-        drivers = Account.objects.filter(user_type="DRIVER").order_by('-last_login')
-
-        page = self.paginate_queryset(drivers)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-
-        serializer = self.get_serializer(drivers, many=True)
-        return Response(serializer.data)

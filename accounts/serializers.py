@@ -121,7 +121,7 @@ class DriverProfileUpdateSerializer(serializers.ModelSerializer):
 class RiderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Rider
-        fields = "__all__"
+        exclude = ('created_at', 'updated_at', 'is_deleted')
         
 
 class DriverSerializer(serializers.ModelSerializer):

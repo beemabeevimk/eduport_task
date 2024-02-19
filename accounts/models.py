@@ -1,6 +1,7 @@
-
+# django modules
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+# local modules
 from .utils import VehicleTypes
 
  # custom manager
@@ -8,6 +9,7 @@ class AccountManager(BaseUserManager):
     def create_user(self, name, email, user_type, password=None):
         if not email:
             raise ValueError('Users must have an email address')
+        # converting email to a standardised form
         email = self.normalize_email(email)
         email = email.lower()
 

@@ -9,26 +9,29 @@ from .serializers import RideSerializer, RideCreateSerializer
 from accounts.models import Driver
 from accounts.serializers import DriverSerializer
 
-"""
-API endpoint for creating a ride request
-"""
+
 class CreateRideView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    """
+    API endpoint for creating a ride request
+    payloads: driver, pickup_location, dropoff_location
+    driver will get from available drivers API
+    """
     def post(self, request):
-        rider_user = request.user.rider
         serializer = RideCreateSerializer(data=request.data, context= {'request':request})
-        if serializer.is_valid():
-            # serializer.rider = rider_user      
+        if serializer.is_valid():     
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     
-"""
-API endpoint for listing all rides.
-"""
+
 class ListRidesView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    """
+    API endpoint for listing all rides.
+    Rides list based on the user types
+    """
     def get(self, request):
         if request.user.user_type == "DRIVER":
             rides = Ride.objects.filter(driver = request.user.driver)
@@ -37,11 +40,14 @@ class ListRidesView(APIView):
         serializer = RideSerializer(rides, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-"""
-API endpoint for Listing available drivers
-"""
+
 class AvailableDriversListAPIView(APIView):
     permission_classes = [permissions.IsAuthenticated]
+    """
+    API endpoint for Listing available drivers
+    Fetches available drivers by excluding those who are currently 
+    assigned to a ride that is either "STARTED" or "ACCEPTED".
+    """
     def get(self, request):
         rides = list(Ride.objects.filter(status__in=["STARTED","ACCEPTED"]).values_list('driver',flat=True))
         active_drivers_id = list(set(rides)) 
@@ -49,10 +55,12 @@ class AvailableDriversListAPIView(APIView):
         serializer = DriverSerializer(drivers, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-"""
-API endpoint for viewing a ride's details
-"""
+
 class RideDetailView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    """
+    API endpoint for viewing a ride's details
+    """
     def get(self, request, ride_id):
         ride = Ride.objects.filter(id=ride_id).first()
         if ride:
@@ -61,10 +69,12 @@ class RideDetailView(APIView):
         return Response({'message': 'Ride not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
-"""
-API endpoint for updating the status of a ride
-"""
+
 class RideStatusUpdateView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    """
+    API endpoint for updating the status of a ride
+    """
     def patch(self, request, ride_id):
         try:
             ride = Ride.objects.get(id=ride_id)
@@ -79,10 +89,12 @@ class RideStatusUpdateView(APIView):
         
         
         
-"""
-API endpoint for real-time ride tracking
-"""
+
 class RideCurrentLocationUpdateView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    """
+    API endpoint for real-time ride tracking
+    """
     def patch(self, request, ride_id):
         try:
             ride = Ride.objects.get(id=ride_id)
@@ -96,9 +108,11 @@ class RideCurrentLocationUpdateView(APIView):
         
 
 class RideAcceptView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
     """
     API endpoint for drivers to accept a ride request,
-    
+    Checks if the driver is authenticated and if the ride request is in the 'REQUESTED' status.
+    If the conditions are met, changes the ride status to 'ACCEPTED'
     """
     def get(self, request, ride_id):
         try:

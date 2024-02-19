@@ -1,9 +1,6 @@
-
-
-# Create your models here.
-
+# local modules
 from django.db import models
-from accounts.models import Account, Rider, Driver
+from accounts.models import Rider, Driver
 
 """
 Django model for Rides
