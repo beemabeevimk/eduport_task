@@ -29,10 +29,6 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         
         return token
 
-"""
-Implement API endpoints for user registration and login 
-
-"""
 
 # Custom Token Obtain Pair View using the custom serializer.
 class MyTokenObtainPairView(TokenObtainPairView):
@@ -41,6 +37,10 @@ class MyTokenObtainPairView(TokenObtainPairView):
     
 # View for user registration.   
 class RegisterView(APIView):
+    """
+    API endpoints for user registration 
+
+    """
     def post(self, request):
         data = request.data
         serializer = UserRegisterSerializer(data=data)
@@ -52,6 +52,10 @@ class RegisterView(APIView):
   
 # View for driver registration. 
 class DriverRegisterAPIView(APIView):
+    """
+    API endpoints for driver registration 
+
+    """
     def post(self, request):
         data = request.data
         serializer = DriverRegisterSerializer(data=data)
@@ -64,12 +68,20 @@ class DriverRegisterAPIView(APIView):
 # View for viewing driver profile and update profile. 
 class DriverProfileAPIView(APIView):
     permission_classes = [permissions.IsAuthenticated]
+    """
+    API endpoints for viewing driver profile 
+
+    """
     def get(self, request):
         user = request.user
         driver = user.driver 
         serializer = DriverProfileSerializer(driver)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
+    """
+    API endpoints for updating driver profile 
+
+    """
     def patch(self, request):
         data = request.data
         user = request.user
@@ -83,6 +95,10 @@ class DriverProfileAPIView(APIView):
   
 
 class RiderRegisterAPIView(APIView):
+    """
+    API endpoints for rider registration 
+
+    """
     def post(self, request):
         data = request.data
         # print(data)
